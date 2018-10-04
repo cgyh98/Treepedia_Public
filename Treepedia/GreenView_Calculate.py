@@ -207,7 +207,6 @@ def GreenViewComputing_ogr_6Horizon(GSVinfoFolder, outTXTRoot, greenmonth, key_f
             
             txtfilename = os.path.join(GSVinfoFolder,txtfile)
             lines = open(txtfilename,"r")
-            
             # create empty lists, to store the information of panos,and remove duplicates
             panoIDLst = []
             panoDateLst = []
@@ -223,7 +222,7 @@ def GreenViewComputing_ogr_6Horizon(GSVinfoFolder, outTXTRoot, greenmonth, key_f
                 lon = metadata[5]
                 lat = metadata[7][:-1]
                 
-                # print (lon, lat, month, panoID, panoDate)
+                # print(lon, lat, month, panoID, panoDate)
                 
                 # in case, the longitude and latitude are invalide
                 if len(lon)<3:
@@ -259,25 +258,36 @@ def GreenViewComputing_ogr_6Horizon(GSVinfoFolder, outTXTRoot, greenmonth, key_f
                     # get a different key from the key list each time
                     idx = i % len(keylist)
                     key = keylist[idx]
+                    print key 
                     
                     # calculate the green view index
                     greenPercent = 0.0
 
                     for heading in headingArr:
                         print "Heading is: ",heading
-                        
+
                         # using different keys for different process, each key can only request 25,000 imgs every 24 hours
-                        URL = "http://maps.googleapis.com/maps/api/streetview?size=400x400&pano=%s&fov=60&heading=%d&pitch=%d&sensor=false&key=AIzaSyAwLr6Oz0omObrCJ4n6lI4VbCCvmaL1Z3Y"%(panoID,heading,pitch)
+                        URL = "http://maps.googleapis.com/maps/api/streetview?size=400x400&pano=%s&fov=60&heading=%d&pitch=%d&sensor=false&key=%s"%(panoID,heading,pitch,key)
+			print URL
                         
                         # let the code to pause by 1s, in order to not go over data limitation of Google quota
-                        time.sleep(1)
-                        
+                        time.sleep(10)
+                        from matplotlib.image import imread
                         # classify the GSV images and calcuate the GVI
                         try:
                             response = requests.get(URL)
+                            print(response)
+
                             im = np.array(Image.open(StringIO(response.content)))
+			    #img_test = imread('pruebaimg.jpeg') 
+			    print im
+
+
                             percent = VegetationClassification(im)
+			    #percent = VegetationClassification(img_test)
+			    
                             greenPercent = greenPercent + percent
+			    print greenPercent
 
                         # if the GSV images are not download successfully or failed to run, then return a null value
                         except:
@@ -287,6 +297,7 @@ def GreenViewComputing_ogr_6Horizon(GSVinfoFolder, outTXTRoot, greenmonth, key_f
                     # calculate the green view index by averaging six percents from six images
                     greenViewVal = greenPercent/numGSVImg
                     print 'The greenview: %s, pano: %s, (%s, %s)'%(greenViewVal, panoID, lat, lon)
+
 
                     # write the result and the pano info to the result txt file
                     lineTxt = 'panoID: %s panoDate: %s longitude: %s latitude: %s, greenview: %s\n'%(panoID, panoDate, lon, lat, greenViewVal)
@@ -300,10 +311,10 @@ if __name__ == "__main__":
     import itertools
     
     
-    GSVinfoRoot = 'MYPATH//spatial-data/metadata'
-    outputTextPath = r'MYPATH//spatial-data/greenViewRes'
+    GSVinfoRoot = '/home/facultading/Documents/Treepedia_Public/spatialdata/metadata'
+    outputTextPath = r'/home/facultading/Documents/Treepedia_Public/spatialdata/greenViewRes'
     greenmonth = ['01','02','03','04','05','06','07','08','09','10','11','12']
-    key_file = 'MYPATH/Treepedia/Treepedia/keys.txt'
+    key_file = '/home/facultading/Documents/Treepedia_Public/Treepedia/keys.txt'
     
     GreenViewComputing_ogr_6Horizon(GSVinfoRoot,outputTextPath, greenmonth, key_file)
 

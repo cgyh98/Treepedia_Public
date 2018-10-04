@@ -27,9 +27,11 @@ def GSVpanoMetadataCollector(samplesFeatureClass,num,ouputTextFolder):
         os.makedirs(ouputTextFolder)
     
     driver = ogr.GetDriverByName('ESRI Shapefile')
-    
+    print(driver)
     # change the projection of shapefile to the WGS84
+
     dataset = driver.Open(samplesFeatureClass)
+    print(dataset)
     layer = dataset.GetLayer()
     
     sourceProj = layer.GetSpatialRef()
@@ -49,7 +51,7 @@ def GSVpanoMetadataCollector(samplesFeatureClass,num,ouputTextFolder):
         if end > featureNum:
             end = featureNum
         
-        ouputTextFile = 'Pnt_start%s_end%s.txt'%(start,end)
+        ouputTextFile = samplesFeatureClass+'Pnt_start%s_end%s.txt'%(start,end)
         ouputGSVinfoFile = os.path.join(ouputTextFolder,ouputTextFile)
         
         # skip over those existing txt files
@@ -69,7 +71,7 @@ def GSVpanoMetadataCollector(samplesFeatureClass,num,ouputTextFolder):
                 geom.Transform(transform)
                 lon = geom.GetX()
                 lat = geom.GetY()
-                key = r'' #Input Your Key here 
+                key = r'AIzaSyDIDMKzl9HG2kFEUkMf9M0JQyIwBO0oXRc' #Input Your Key here 
                 
                 # get the meta data of panoramas 
                 urlAddress = r'http://maps.google.com/cbk?output=xml&ll=%s,%s'%(lat,lon)
@@ -104,9 +106,9 @@ def GSVpanoMetadataCollector(samplesFeatureClass,num,ouputTextFolder):
 if __name__ == "__main__":
     import os, os.path
     
-    root = 'MYPATH/spatial-data'
-    inputShp = os.path.join(root,'Cambridge20m.shp')
+    root = '/home/facultading/Documents/Treepedia_Public/spatialdata'
+    inputShp = os.path.join(root,'Sanisidro20m.shp')
     outputTxt = root
     
-    GSVpanoMetadataCollector(inputShp,1000,outputTxt)
+    GSVpanoMetadataCollector(inputShp,200,outputTxt)
 

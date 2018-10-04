@@ -105,8 +105,8 @@ if __name__ == "__main__":
     import os,os.path
     import sys
 
-    root = '/home/claudio/Documents/Treepedia_Public/spatialdata'
-    inshp = os.path.join(root,'LapuntaStreet_wgs84.shp')
-    outshp = os.path.join(root,'Lapunta20m.shp')
+    root = '/home/facultading/Documents/Treepedia_Public/spatialdata'
+    inshp = os.path.join(root,'SanisidroStreet_wgs84.shp')
+    outshp = os.path.join(root,'Sanisidro20m.shp')
     mini_dist = 20 #the minimum distance between two generated points in meter
     createPoints(inshp, outshp, mini_dist)
